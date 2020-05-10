@@ -18,6 +18,13 @@ namespace laba2
         public Form1()
         {
             InitializeComponent();
+            openN.Click += openN_Click;
+            saveN.Click += saveN_Click;
+            openM.Click += openM_Click;
+            saveM.Click += saveM_Click;
+            openFileDialog1.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+            saveFileDialog1.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+
         }
         private void ExitButton_Click_1(object sender, EventArgs e)
         {
@@ -116,6 +123,26 @@ namespace laba2
             if (q == 0)
                 QuadrangleText.Text += $"No parallelograms in the array\n";
         }
+
+       
+        private void saveN_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = saveFileDialog1.FileName;
+            System.IO.File.WriteAllText(filename, QuadrangleText.Text);
+            MessageBox.Show("File is saved");
+        }
+        private void openN_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = openFileDialog1.FileName;
+            string fileText = System.IO.File.ReadAllText(filename);
+            QuadrangleText.Text = fileText;
+            MessageBox.Show("File is opened");
+        }
+
         private void genM_Click(object sender, EventArgs e)
         {
             ParallelogramText.Text = "";
@@ -156,5 +183,25 @@ namespace laba2
             ParallelogramText.Text += $"The number of max parallelogram's area(M): [{(max + 1)}]\n";
             ParallelogramText.Text += $"The number of min parallelogram's area(M): [{(min + 1)}]\n";
         }
+       
+        private void saveM_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = saveFileDialog1.FileName;
+            System.IO.File.WriteAllText(filename, ParallelogramText.Text);
+            MessageBox.Show("File is saved");
+
+        }
+        private void openM_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            string filename = openFileDialog1.FileName;
+            string fileText = System.IO.File.ReadAllText(filename);
+            ParallelogramText.Text = fileText;
+            MessageBox.Show("File is opened");
+        }
+
     }
 }
