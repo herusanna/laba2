@@ -170,8 +170,7 @@
             this.openM.Click += new System.EventHandler(this.openM_Click);
             // 
             // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            //            
             // 
             // Form1
             // 

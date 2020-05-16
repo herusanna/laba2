@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
+using System.IO;
 namespace laba2
 {
     public struct point2D
     {
         public int x;
         public int y;
-    }
-    public static class RandomProvider
-    {
-        private static int seed = Environment.TickCount;
-
-        private static ThreadLocal<Random> randomWrapper = new ThreadLocal<Random>(() =>new Random(Interlocked.Increment(ref seed)));
-        public static Random GetThreadRandom()
-        {
-            return randomWrapper.Value;
-        }
     }
 
     public class Quadrangle { 
@@ -26,6 +18,7 @@ namespace laba2
         public double[] side;
         public double[] diagon = new double[2];
         public double[] angle = new double[2];
+        public double getP, getA;
         Random r;
        
         int size = 4;
@@ -74,12 +67,14 @@ namespace laba2
         }
         public double getPerimetr()
         {
-            return side[0] + side[1] + side[2] + side[3];
+           getP = side[0] + side[1] + side[2] + side[3];
+            return getP;
         }
         public double getArea()
         {
             double p = getPerimetr() / 2;
-            return Math.Sqrt(p * (p - side[0]) * (p - side[1]) * (p - side[2]) * (p - side[3]));
+            getA = Math.Sqrt(p * (p - side[0]) * (p - side[1]) * (p - side[2]) * (p - side[3]));
+            return getA;
         }
         public void getAngle()
         {
@@ -116,6 +111,47 @@ namespace laba2
             info += $"Area: {String.Format("{0:0.00}", getArea())}\n\n\n";
             return info;
         }
+        public void WriteBin(BinaryWriter bw)
+        {
+            for (int i = 0; i < points.Length; i++)
+            {
+                bw.Write(points[i].x);
+                bw.Write(points[i].y);
+            }
+            for (int i = 0; i < points.Length; i++)
+            {
+                bw.Write(side[i]);
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                bw.Write(angle[i]);
+            }
+            bw.Write(getPerimetr());
+            bw.Write(getArea());
+        }
+        public Quadrangle ReadBin(BinaryReader br)
+        {
+            int seed=0;
+            Quadrangle quadrangle = new Quadrangle(seed++);
 
+            for (int i = 0; i < points.Length; i++)
+            {
+                quadrangle.points[i].x = br.Read();
+                quadrangle.points[i].y = br.Read();
+            }
+            for (int i = 0; i < points.Length; i++)
+            {
+                quadrangle.side[i] = br.Read();
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                quadrangle.angle[i] = br.ReadDouble();
+            }
+            quadrangle.getP = br.ReadDouble();
+            quadrangle.getA = br.ReadDouble();
+
+            return quadrangle;
+        }
     }
 }
+
