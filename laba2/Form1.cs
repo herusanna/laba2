@@ -115,11 +115,8 @@ namespace laba2
                 return;
             // получаем выбранный файл
             string filename = openFileDialog1.FileName;
-            //файловый поток
             FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            //бинарный  считователь
             BinaryReader br = new BinaryReader(fs, Encoding.UTF8);
-
             //инициализируем массив кол-вом значенний 
             N = br.ReadInt32();
             M = br.ReadInt32();
@@ -127,7 +124,7 @@ namespace laba2
             quadrangle = new Quadrangle[N];
             for (int i = 0; i < N; i++)
             {
-                //Считываем значения с файла
+            //Считываем значения с файла
                 quadrangle[i] = new Quadrangle();
                 quadrangle[i] = quadrangle[i].Read(br);
             }
