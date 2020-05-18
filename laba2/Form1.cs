@@ -326,7 +326,7 @@ namespace laba2
             {
                 QuadrangleText.Text += "NUMBER: " + (i + 1) + "\n";
                 QuadrangleText.Text += quadrangle[i].ShowInfo();
-                QuadrangleText.Text += "----------------------------\n";
+                QuadrangleText.Text += "---------------------------\n";
             }
         }
         public void ShowP()
@@ -336,7 +336,7 @@ namespace laba2
             {
                 ParallelogramText.Text += "NUMBER: " + (i + 1) + "\n";
                 ParallelogramText.Text += parallelograms[i].ShowInfoP();
-                ParallelogramText.Text += "----------------------------\n";
+                ParallelogramText.Text += "---------------------------\n";
             }
         }
     }
