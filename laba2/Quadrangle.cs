@@ -12,10 +12,10 @@ namespace laba2
         public int y;
     }
 
-    public class Quadrangle { 
-        point2D[] points;
+    public class Quadrangle {
+        public point2D[] points = new point2D[4];
+        public double[] side = new double[4];
         public point2D[] point;
-        public double[] side;
         public double[] diagon = new double[2];
         public double[] angle = new double[2];
         public double getP, getA;
@@ -26,29 +26,16 @@ namespace laba2
         public Quadrangle(int seed) 
         {
             r = new Random(seed);
-            this.points = new point2D[4];
             for (int i = 0; i < points.Length; i++)
             {
                 points[i].x = r.Next(-5, 10);
                 points[i].y = r.Next(-5, 10);
             }
         }
-        public void pointParallelo(int seed)
-        {
-            int num = r.Next(-10,10);
-            this.point = new point2D[4];
-            point[0].x = r.Next(-5, 5);
-            point[0].y = r.Next(-5, 5);
-            point[1].x = point[0].x + 5;
-            point[1].y = point[0].y;
-            point[2].x = point[1].x + num;
-            point[2].y = point[1].y + num;
-            point[3].x = point[0].x + num;
-            point[3].y = point[2].y;
-        } 
+        public Quadrangle() { }
+
         public void getSide()
         {
-            side = new double[4];
             for (int i = 0; i < points.Length; i++)
             {
                 side[i] = (int)Math.Sqrt(Math.Pow(points[(i + 1) % size].x - points[i].x, 2) + Math.Pow(points[(i + 1) % size].y - points[i].y, 2));
@@ -122,7 +109,7 @@ namespace laba2
             {
                 bw.Write(side[i]);
             }
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 bw.Write(angle[i]);
             }
@@ -131,8 +118,7 @@ namespace laba2
         }
         public Quadrangle ReadBin(BinaryReader br)
         {
-            int seed=0;
-            Quadrangle quadrangle = new Quadrangle(seed++);
+            Quadrangle quadrangle = new Quadrangle();
 
             for (int i = 0; i < points.Length; i++)
             {
@@ -143,7 +129,7 @@ namespace laba2
             {
                 quadrangle.side[i] = br.Read();
             }
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 quadrangle.angle[i] = br.ReadDouble();
             }

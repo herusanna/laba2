@@ -13,8 +13,8 @@ namespace laba2
 {
     public partial class Form1 : Form
     {
-       Quadrangle[] quadrangle;
-
+        Quadrangle[] quadrangle;
+        Parallelogram[] parallelograms;
         int seed = 0;
         public int n, m;
         public int N { get => n; set => n = value; }
@@ -38,13 +38,28 @@ namespace laba2
 
         public class Parallelogram : Quadrangle
         {
-            double getAP;
-            public Parallelogram(int seed) : base(seed) { }
+            double getAP;           
             int size = 4;
+            public Parallelogram(int seed) : base(seed)
+            {
+                Random r = new Random();
+                r = new Random(seed);
+                int num = r.Next(-10, 10);
+                this.point = new point2D[4];
+                point[0].x = r.Next(-5, 5);
+                point[0].y = r.Next(-5, 5);
+                point[1].x = point[0].x + 5;
+                point[1].y = point[0].y;
+                point[2].x = point[1].x + num;
+                point[2].y = point[1].y + num;
+                point[3].x = point[0].x + num;
+                point[3].y = point[2].y;
+            }
+            public Parallelogram() { }
             public void getSideP(int seed)
-            {                
+            {
+               
                 side = new double[4];
-                pointParallelo(seed);
                 for (int i = 0; i < size; i++)
                 {
                     side[i] = (int)Math.Sqrt(Math.Pow(point[(i + 1) % size].x - point[i].x, 2) + Math.Pow(point[(i + 1) % size].y - point[i].y, 2));
@@ -82,7 +97,7 @@ namespace laba2
         public Parallelogram ReadBin (BinaryReader br)
         {
                 int seed = 0;
-            Parallelogram info = new Parallelogram(seed++);
+           Parallelogram info = new Parallelogram(seed++);
 
             for (int i = 0; i < size; i++)
             {
@@ -93,7 +108,7 @@ namespace laba2
             {
                 info.side[i] = br.ReadDouble();
             }
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 info.angle[i] = br.ReadDouble();
             }
@@ -103,8 +118,6 @@ namespace laba2
         }
         
         }
-        Parallelogram[] parallelograms;
-        Parallelogram parallelogram;
         private void genN_Click(object sender, EventArgs e)
         {
             QuadrangleText.Text = "";
@@ -120,14 +133,14 @@ namespace laba2
             for (int i = 0; i < n; i++)
             {
                do
-                {
+               {
                     quadrangle[i] = new Quadrangle(seed++);
                     quadrangle[i].getSide();
                     quadrangle[i].getAngle();
                     quadrangle[i].getDiagon();
                     quadrangle[i].getPerimetr();
                     quadrangle[i].getArea();
-                } while (!quadrangle[i].exist()) ;
+               } while (!quadrangle[i].exist()) ;
                     QuadrangleText.Text += $"[{i+1}] quadrangle's data:\n {quadrangle[i].ShowInfo()}";
             }
             double average = 0;
@@ -187,26 +200,18 @@ namespace laba2
             BinaryReader br = new BinaryReader(fs, Encoding.UTF8);
             // string fileText = System.IO.File.ReadAllText(filename);
             //QuadrangleText.Text = fileText;
+            quadrangle = new Quadrangle[N];
             N = br.ReadInt32();
-            M = br.ReadInt32();
+
+
             for (int i = 0; i < N; i++)
             {
                 quadrangle[i] = new Quadrangle(seed);
                 quadrangle[i] = quadrangle[i].ReadBin(br);
             }
-            for (int i = 0; i < M; i++)
-            {
-                parallelograms[i] = new Parallelogram(seed);
-                parallelograms[i] = parallelograms[i].ReadBin(br);
-            }
-            ShowAll();
+            ShowQ();
 
-            if (M != 0)
-            {
-               Parallelogram parallelogram = new Parallelogram(seed);
-                parallelogram = parallelogram.ReadBin(br);
-                ParallelogramText.Text += parallelogram.ShowInfoP();
-            }
+           
             br.Close();
             fs.Close();
             MessageBox.Show("File is opened");
@@ -227,14 +232,14 @@ namespace laba2
             for (int i = 0; i < m; i++)
             {
                do
-                {
+               {
                     parallelograms[i] = new Parallelogram(seed++);
                     parallelograms[i].getSideP(seed);
                     parallelograms[i].getAngle();                    
                     parallelograms[i].getPerimetr();
                     parallelograms[i].getAreaP();
                     ParallelogramText.Text += $"[{i + 1}] parallelogram's data:\n {parallelograms[i].ShowInfoP()}";
-                } while (!parallelograms[i].exist() && !parallelograms[i].checkParallelogram()) ;
+               } while (!parallelograms[i].exist() && !parallelograms[i].checkParallelogram()) ;
             }
             int max = 0;
             int min = 0;
@@ -277,12 +282,24 @@ namespace laba2
         }
         private void openM_Click(object sender, EventArgs e)
         {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
             string filename = openFileDialog1.FileName;
-            string fileText = System.IO.File.ReadAllText(filename);
-            ParallelogramText.Text = fileText;
+            FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs, Encoding.UTF8);
+            parallelograms = new Parallelogram[M];
+            M = br.ReadInt32();
+            for (int i = 0; i < M; i++)
+            {
+                parallelograms[i] = new Parallelogram(seed);
+                parallelograms[i] = parallelograms[i].ReadBin(br);
+            }
+            ShowP();
+            br.Close();
+            fs.Close();
             MessageBox.Show("File is opened");
+            
         }
         public void WriteBin(BinaryWriter bw)
         {
@@ -292,28 +309,29 @@ namespace laba2
             Parallelogram parallelogram = new Parallelogram(seed);
             Parallelogram[] parallelograms = new Parallelogram[M];
             for (int i = 0; i < N; i++)
-            {
+            {               
                 quadrangle[i].WriteBin(bw);
             }
             for (int i = 0; i < M; i++)
             {
                 parallelograms[i].WriteBin(bw);
             }
-            if (M != 0)
-            {
-                parallelogram.WriteBin(bw);
-            }
+          
         }
-        public void ShowAll()
+        public void ShowQ()
         {
             QuadrangleText.Text = "";
-            ParallelogramText.Text = "";
+          
             for (int i = 0; i < N; i++)
             {
                 QuadrangleText.Text += "NUMBER: " + (i + 1) + "\n";
                 QuadrangleText.Text += quadrangle[i].ShowInfo();
                 QuadrangleText.Text += "----------------------------\n";
             }
+        }
+        public void ShowP()
+        {
+            ParallelogramText.Text = "";
             for (int i = 0; i < M; i++)
             {
                 ParallelogramText.Text += "NUMBER: " + (i + 1) + "\n";
