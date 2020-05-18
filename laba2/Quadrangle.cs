@@ -12,18 +12,18 @@ namespace laba2
         public int y;
     }
 
-    public class Quadrangle {
+    public class Quadrangle
+    {
         public point2D[] points = new point2D[4];
         public double[] side = new double[4];
-        public point2D[] point;
         public double[] diagon = new double[2];
         public double[] angle = new double[2];
-        public double getP, getA;
+        public double Perimetr, Area;
         Random r;
-       
+
         int size = 4;
-    
-        public Quadrangle(int seed) 
+
+        public Quadrangle(int seed)
         {
             r = new Random(seed);
             for (int i = 0; i < points.Length; i++)
@@ -33,7 +33,6 @@ namespace laba2
             }
         }
         public Quadrangle() { }
-
         public void getSide()
         {
             for (int i = 0; i < points.Length; i++)
@@ -42,9 +41,9 @@ namespace laba2
                 side[i] = Math.Round(side[i], 0);
             }
         }
-        public bool exist()
+        public bool IsExist()
         {
-            if ((side[0] < side[1] + side[2] + side[3]) && (side[1] < side[0] + side[2] + side[3]))
+            if ((side[0] < side[1] + side[2] + side[3]) && (side[1] < side[0] + side[2] + side[3]) && !double.IsNaN(angle[0]) && !double.IsNaN(angle[1]) && angle[0] > 0)
             {
                 if ((side[2] < side[0] + side[1] + side[3]) && (side[3] < side[0] + side[1] + side[2]))
                     return true;
@@ -52,16 +51,14 @@ namespace laba2
             }
             else return false;
         }
-        public double getPerimetr()
+        public void getPerimetr()
         {
-           getP = side[0] + side[1] + side[2] + side[3];
-            return getP;
+            Perimetr = side[0] + side[1] + side[2] + side[3];
         }
-        public double getArea()
+        public void getArea()
         {
-            double p = getPerimetr() / 2;
-            getA = Math.Sqrt(p * (p - side[0]) * (p - side[1]) * (p - side[2]) * (p - side[3]));
-            return getA;
+            double p = Perimetr / 2;
+            Area = Math.Sqrt(p * (p - side[0]) * (p - side[1]) * (p - side[2]) * (p - side[3]));
         }
         public void getAngle()
         {
@@ -81,9 +78,17 @@ namespace laba2
                 }
             }
         }
+        public bool checkParallelogram()
+        {
+            bool result = false;
+            if (side[0] == side[2] && side[1] == side[3])
+                result = true;
+            return result;
+
+        }
         public string ShowInfo()
         {
-            string info="";
+            string info = "";
             for (int i = 0; i < size; i++)
             {
                 info += $"Point {i + 1}: х = {points[i].x},\t у = {points[i].y}\n";
@@ -94,11 +99,11 @@ namespace laba2
             }
             info += $"1 diagonal : {diagon[0]}\n";
             info += $"2 diagonal : {diagon[1]}\n";
-            info += $"Perimetr: {getPerimetr()}\n";
-            info += $"Area: {String.Format("{0:0.00}", getArea())}\n\n\n";
+            info += $"Perimetr: {Perimetr}\n";
+            info += $"Area: {String.Format("{0:0.00}", Area)}\n\n\n";
             return info;
         }
-        public void WriteBin(BinaryWriter bw)
+        public void Write(BinaryWriter bw)
         {
             for (int i = 0; i < points.Length; i++)
             {
@@ -111,32 +116,32 @@ namespace laba2
             }
             for (int i = 0; i < 2; i++)
             {
-                bw.Write(angle[i]);
+                bw.Write(diagon[i]);
             }
-            bw.Write(getPerimetr());
-            bw.Write(getArea());
+            bw.Write(Perimetr);
+            bw.Write(Area);
         }
-        public Quadrangle ReadBin(BinaryReader br)
+        public Quadrangle Read(BinaryReader br)
         {
-            Quadrangle quadrangle = new Quadrangle();
+            Quadrangle temp = new Quadrangle();
 
             for (int i = 0; i < points.Length; i++)
             {
-                quadrangle.points[i].x = br.Read();
-                quadrangle.points[i].y = br.Read();
+                temp.points[i].x = br.ReadInt32();
+                temp.points[i].y = br.ReadInt32();
             }
             for (int i = 0; i < points.Length; i++)
             {
-                quadrangle.side[i] = br.Read();
+                temp.side[i] = br.ReadDouble();
             }
             for (int i = 0; i < 2; i++)
             {
-                quadrangle.angle[i] = br.ReadDouble();
+                temp.diagon[i] = br.ReadDouble();
             }
-            quadrangle.getP = br.ReadDouble();
-            quadrangle.getA = br.ReadDouble();
+            temp.Perimetr = br.ReadDouble();
+            temp.Area = br.ReadDouble();
 
-            return quadrangle;
+            return temp;
         }
     }
 }
